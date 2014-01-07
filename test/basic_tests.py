@@ -1,3 +1,5 @@
+import time
+
 __author__ = 'nabcos'
 
 import unittest
@@ -32,7 +34,6 @@ class BasicTests(unittest.TestCase):
         test_config = {"savedir": self.test_dir, "basedir": self.test_dir, "vol_get_cmd": "echo 1", "vol_filter_regexp": "(.)"}
 
         oysterconfig.getConfig = mock.MagicMock(name="getConfig", return_value=test_config )
-        oyster.ControlThread = mock.MagicMock(name="ControlThread")
         oyster.PlaylistBuilder = mock.MagicMock(name="PlaylistBuilder")
 
         self.underTest = oyster.Oyster()
@@ -44,6 +45,16 @@ class BasicTests(unittest.TestCase):
 
     def testBasic(self):
         assert_that(self.underTest, not_none())
+
+    def cmd(self, cmd):
+        file(self.underTest.controlfile, 'w').write(cmd + '\n')
+        time.sleep(1)
+
+    def testControl(self):
+        assert_that(self.underTest.nextreason, equal_to(''))
+        self.cmd('NEXT')
+        assert_that(self.underTest.nextreason, equal_to('SKIPPED'))
+
 
 def main():
     unittest.main()

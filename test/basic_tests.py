@@ -36,7 +36,11 @@ class BasicTests(unittest.TestCase):
         oysterconfig.getConfig = mock.MagicMock(name="getConfig", return_value=test_config )
         oyster.PlaylistBuilder = mock.MagicMock(name="PlaylistBuilder")
 
-        self.underTest = oyster.Oyster()
+        self.under_test = oyster.Oyster()
+
+        self.controller = oyster.ControlThread()
+        self.controller.setDaemon(True)
+        self.controller.start_controller(self.under_test, self.under_test.control)
 
     def tearDown(self):
         shutil.rmtree(self.test_dir)
@@ -44,16 +48,16 @@ class BasicTests(unittest.TestCase):
         super( BasicTests, self ).tearDown( )
 
     def testBasic(self):
-        assert_that(self.underTest, not_none())
+        assert_that(self.under_test, not_none())
 
     def cmd(self, cmd):
-        file(self.underTest.controlfile, 'w').write(cmd + '\n')
+        file(self.under_test.controlfile, 'w').write(cmd + '\n')
         time.sleep(1)
 
     def testControl(self):
-        assert_that(self.underTest.nextreason, equal_to(''))
+        assert_that(self.under_test.nextreason, equal_to(''))
         self.cmd('NEXT')
-        assert_that(self.underTest.nextreason, equal_to('SKIPPED'))
+        assert_that(self.under_test.nextreason, equal_to('SKIPPED'))
 
 
 def main():

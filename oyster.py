@@ -168,14 +168,10 @@ class Oyster:
         
         self.control = open(self.controlfile, 'r+')
 
-        cthread = ControlThread()
-        cthread.setDaemon(True)
-        cthread.start_controller(self, self.control)
-
         plhelper = PlaylistBuilder()
         plhelper.build_playlist(self)
 
-        # for basedir/status -> playing 
+        # for basedir/status -> playing
         self.unpause()
 
         log.debug("end init")
@@ -885,6 +881,11 @@ log = logging.getLogger("oyster")
 
 if __name__ == '__main__':
     oy = Oyster()
+
+    cthread = ControlThread()
+    cthread.setDaemon(True)
+    cthread.start_controller(oy, oy.control)
+
     # if we have nothing to play, wait until first default playlist is built
     if len(oy.filelist) == 0:
         while len(oy.filelist) == 0:

@@ -4,8 +4,10 @@ import unittest
 
 def all_tests_suite():
     suite = unittest.TestLoader().loadTestsFromNames([
-        'basic_tests'
+        'basic_tests',
+        'test.connector.rest'
     ])
+
     return unittest.TestSuite([suite])
 
 

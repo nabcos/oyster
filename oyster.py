@@ -33,6 +33,7 @@ import re
 import datetime
 
 from connector.fifo import ControlThread
+from connector.rest import RestController
 import oysterconfig
 
 
@@ -146,6 +147,7 @@ class Oyster:
         log.debug("reading old default list")
         for i in range(0, self.len_nextfiles):
             self.playreasons.append("filler")
+
         self.load_playlist("default")
 
         # read scores for playlist 
@@ -790,6 +792,10 @@ if __name__ == '__main__':
     cthread.setDaemon(True)
     cthread.start_controller(oy, oy.control)
 
+    rest_controller = RestController(oy)
+    rest_controller.setDaemon(True)
+    rest_controller.start()
+
     # if we have nothing to play, wait until first default playlist is built
     if len(oy.filelist) == 0:
         while len(oy.filelist) == 0:
@@ -797,4 +803,4 @@ if __name__ == '__main__':
         oy.loadPlaylist("default", skip=True)
 
     while not oy.do_exit:
-        oy.play(oy.filetoplay)
+        oy.play(oy.filetoplay, "START")

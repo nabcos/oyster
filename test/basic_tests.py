@@ -1,4 +1,5 @@
 import time
+from connector.fifo import ControlThread
 
 __author__ = 'nabcos'
 
@@ -38,7 +39,7 @@ class BasicTests(unittest.TestCase):
 
         self.under_test = oyster.Oyster()
 
-        self.controller = oyster.ControlThread()
+        self.controller = ControlThread()
         self.controller.setDaemon(True)
         self.controller.start_controller(self.under_test, self.under_test.control)
 
